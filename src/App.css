@@ -12,13 +12,11 @@
 
 * { box-sizing: border-box; }
 
-/* --- ESTRUCTURA PRINCIPAL --- */
+/* --- ESTRUCTURA PRINCIPAL (CON SCROLL) --- */
 body {
   margin: 0;
-  width: 100vw;
-  /* Altura dinámica para móviles y total para PC */
-  min-height: 100vh;
-  height: 100dvh; 
+  width: 100%;
+  min-height: 100vh; /* Ocupa al menos toda la pantalla, pero puede crecer */
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
   background-image: 
@@ -28,33 +26,27 @@ body {
   color: var(--primary);
   display: flex;
   justify-content: center;
-  align-items: center;
-  overflow: hidden; /* Evita scroll en la página principal */
+  align-items: flex-start; /* Alineado arriba para permitir scroll */
+  padding-top: 40px;      /* Espacio arriba para que no pegue al techo */
+  padding-bottom: 40px;   /* Espacio abajo para scroll */
 }
 
 .app-container {
   width: 100%;
-  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 20px;
+  padding: 10px;
 }
 
-/* --- TARJETA INTELIGENTE --- */
+/* --- TARJETA CLÁSICA --- */
 .card {
   background: var(--card-bg);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 2.5rem;
   
-  /* LÓGICA DE TAMAÑO */
   width: 100%;
-  max-width: 500px;       /* Ancho máximo en PC */
-  max-height: 95dvh;      /* Nunca más alta que la pantalla */
-  
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* Centrado vertical */
+  max-width: 500px;
+  height: auto;           /* Altura automática según contenido */
   
   text-align: center;
   position: relative;
@@ -62,9 +54,6 @@ body {
   border: 1px solid #333;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
   animation: fadeIn 0.6s ease-out;
-  
-  /* Si el contenido es MUY largo en un cel muy pequeño, permite scroll interno */
-  overflow-y: auto; 
 }
 
 /* Efecto Neón Superior */
@@ -85,28 +74,31 @@ h1 {
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   color: var(--primary);
-  font-size: 1.5rem;
+  font-size: 1.6rem;
 }
 
 h2 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin-bottom: 1rem; }
-p { color: var(--text-dim); font-size: 0.9rem; margin: 5px 0 15px 0; }
+p { color: var(--text-dim); font-size: 0.9rem; margin: 5px 0 20px 0; }
 code { font-family: 'Courier New', monospace; color: var(--accent); background: #111; padding: 2px 5px; border-radius: 4px; font-size: 0.8rem; }
 
-/* --- CONTENEDOR DE IMAGEN (LA MAGIA) --- */
+/* --- CONTENEDOR DE IMAGEN (GRANDE Y CLARO) --- */
 .mini-preview-container, .success-image-container {
     width: 100%;
+    /* Altura generosa por defecto */
+    height: 350px; 
+    
     background: #000;
     border-radius: 12px;
     border: 1px solid #333;
+    
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 15px 0;
+    margin: 20px 0;
     overflow: hidden;
-    position: relative;
 }
 
-/* La imagen NUNCA se recorta (contain) y se centra */
+/* La imagen se ajusta para verse ENTERA sin recortes */
 .mini-preview, .success-image-preview {
     width: 100%;
     height: 100%;
@@ -124,10 +116,11 @@ code { font-family: 'Courier New', monospace; color: var(--accent); background: 
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
-  margin-top: 15px;
+  margin-top: 20px;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: all 0.2s;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 .btn-primary:active { transform: scale(0.98); }
 
@@ -139,68 +132,45 @@ code { font-family: 'Courier New', monospace; color: var(--accent); background: 
   padding: 12px;
   border-radius: 8px;
   width: 100%;
-  margin-top: 10px;
+  margin-top: 15px;
   cursor: pointer;
 }
 
 /* --- COMPONENTES INTERNOS --- */
 .checklist {
   text-align: left;
-  margin-top: 15px;
+  margin-top: 20px;
   background: #0a0a0a;
   padding: 15px;
   border-radius: 12px;
   border: 1px solid #222;
 }
 
-.check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
+.check-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
 .check-item:last-child { border-bottom: none; }
 
-.author-box { background: #111; border: 1px solid #444; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: left; font-size: 0.8rem; }
+.author-box { background: #111; border: 1px solid #444; padding: 12px; border-radius: 8px; margin: 15px 0; text-align: left; font-size: 0.8rem; }
 
 .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 .info-box { background: #0a0a0a; border: 1px solid #444; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.info-label { font-size: 0.65rem; color: var(--text-dim); margin-bottom: 3px; letter-spacing: 1px; }
-.info-value { font-size: 0.8rem; color: var(--primary); font-weight: 600; }
+.info-label { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 3px; letter-spacing: 1px; }
+.info-value { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
 .options-grid { display: flex; justify-content: center; margin-top: 20px; }
-.option-btn { background: #0a0a0a; border: 1px solid #333; padding: 25px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+.option-btn { background: #0a0a0a; border: 1px solid #333; padding: 30px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; transition: all 0.3s; }
+.option-btn:hover { border-color: var(--primary); transform: translateY(-3px); }
 
-/* --- MEDIA QUERY: ESTO CONTROLA LA DIFERENCIA PC vs MÓVIL --- */
-
-/* 💻 PANTALLAS GRANDES (PC / Laptop) */
-@media (min-width: 768px) {
-    .card {
-        padding: 3rem; /* Más espacio interno */
-        max-width: 550px;
-    }
-    .mini-preview-container, .success-image-container {
-        height: 250px; /* Altura fija y grande para que luzca la foto */
-    }
-    h1 { font-size: 1.8rem; }
-}
-
-/* 📱 PANTALLAS PEQUEÑAS (Móviles) */
-@media (max-width: 767px) {
+/* --- AJUSTE PARA MÓVILES (SOLO REDUCIR UN POCO LA ALTURA DE IMAGEN) --- */
+@media (max-width: 600px) {
     .card {
         padding: 1.5rem;
-        height: auto;
-        max-height: 98dvh; /* Aprovecha casi toda la pantalla */
-        justify-content: flex-start; /* Empieza arriba para evitar cortes */
     }
     
+    /* En celular la imagen es un poco más pequeña, pero clara */
     .mini-preview-container, .success-image-container {
-        /* Altura flexible: Mínimo 150px, Máximo 35% de la pantalla */
-        height: auto;
-        min-height: 150px;
-        max-height: 35vh; 
-        aspect-ratio: 16/9; /* Proporción agradable por defecto */
+        height: 250px; 
     }
     
-    /* Ajustar textos para ganar espacio */
-    h1 { font-size: 1.3rem; margin-top: 0; }
-    .option-btn { padding: 15px; }
-    .btn-primary { padding: 12px; margin-top: 10px; }
+    h1 { font-size: 1.4rem; }
 }
 
-/* ANIMACIONES */
 @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
