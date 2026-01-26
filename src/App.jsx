@@ -5,7 +5,6 @@ import './App.css';
 
 // --- CONFIGURACIÓN ---
 const CONTRACT_ADDRESS = "0xBbf0b19E33cCAee777c9B8E2C2F99062e07218F8"; 
-// RPC Público para el modo "Solo ver"
 const RPC_URL = "https://polygon-amoy.drpc.org";
 
 const CONTRACT_ABI = [
@@ -27,14 +26,12 @@ function App() {
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
-        // 1. INTENTAR CAMBIAR A POLYGON AMOY
         try {
             await window.ethereum.request({
                 method: "wallet_switchEthereumChain",
-                params: [{ chainId: "0x13882" }], // ID 80002 en Hex
+                params: [{ chainId: "0x13882" }], 
             });
         } catch (switchError) {
-            // Si la red no existe, la agregamos
             if (switchError.code === 4902) {
                 await window.ethereum.request({
                     method: "wallet_addEthereumChain",
@@ -48,20 +45,16 @@ function App() {
                 });
             }
         }
-
-        // 2. CONECTAR
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         setWallet(signer.address);
         setIsAdmin(true);
         setView('dashboard');
-
       } catch (err) { 
         console.error(err);
         alert("Error de conexión: Asegúrate de usar la App de MetaMask."); 
       }
     } else { 
-        // AVISO IMPORTANTE PARA MÓVIL
         alert("⚠️ Para certificar desde el celular, debes abrir esta página DENTRO del navegador de la App MetaMask."); 
     }
   };
@@ -81,7 +74,6 @@ function App() {
     setFinalData(null);
   };
 
-  // LÓGICA PRINCIPAL
   const handleFile = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -202,8 +194,9 @@ function App() {
             
             <div className="options-grid" style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
                 <label className="option-btn" style={{ width: '100%', maxWidth: '200px' }}>
-                    <span className="icon">📂</span>
-                    <span>Subir Imagen</span>
+                    <span className="icon">📸</span>
+                    <span>Tomar Foto / Subir</span>
+                    {/* accept="image/*" permite cámara en celular */}
                     <input type="file" onChange={handleFile} accept="image/*" hidden />
                 </label>
             </div>
@@ -260,6 +253,13 @@ function App() {
             
             {previewUrl && <div className="success-image-container"><img src={previewUrl} className="success-image-preview" /></div>}
 
+            {/* --- BOTÓN DE DESCARGA (NUEVO) --- */}
+            <a href={previewUrl} download={`certificado_${finalData?.hash?.slice(0,6)}.png`} style={{textDecoration: 'none', width: '100%'}}>
+                 <button className="btn-secondary" style={{marginTop: '0', marginBottom: '15px', borderColor: '#fff', color: '#fff'}}>
+                    ⬇️ Guardar Imagen
+                 </button>
+            </a>
+
             <div className="author-box">
                 <span style={{opacity: 0.6, fontSize: '0.8rem'}}>Certificado por (Wallet):</span>
                 <code style={{display: 'block', marginTop: '5px', color: '#fff'}}>{finalData?.autor}</code>
@@ -300,6 +300,13 @@ function App() {
             </p>
             
             {previewUrl && <div className="success-image-container" style={{borderColor: '#00ff88'}}><img src={previewUrl} className="success-image-preview" /></div>}
+
+            {/* --- BOTÓN DE DESCARGA (NUEVO) --- */}
+            <a href={previewUrl} download={`certificado_valido_${finalData?.hash?.slice(0,6)}.png`} style={{textDecoration: 'none', width: '100%'}}>
+                 <button className="btn-secondary" style={{marginTop: '0', marginBottom: '15px', borderColor: '#00ff88', color: '#00ff88'}}>
+                    ⬇️ Guardar Copia
+                 </button>
+            </a>
 
             <div className="author-box" style={{borderColor: '#00ff88', background: 'rgba(0, 255, 136, 0.05)'}}>
                 <span style={{opacity: 0.8, fontSize: '0.8rem', color: '#00ff88'}}>👤 Certificado por (Autor):</span>
