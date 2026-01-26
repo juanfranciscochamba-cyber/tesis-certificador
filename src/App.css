@@ -1,4 +1,4 @@
-/* --- FUENTES Y VARIABLES GLOBALES --- */
+/* --- FUENTES Y VARIABLES --- */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
 
 :root {
@@ -10,15 +10,15 @@
   --text-dim: #a0a0a0;
 }
 
-/* --- ESTRUCTURA BASE "FULL SCREEN" --- */
-* {
-  box-sizing: border-box; /* Vital para que los paddings no rompan el tamaño */
-}
+* { box-sizing: border-box; }
 
+/* --- ESTRUCTURA PRINCIPAL --- */
 body {
   margin: 0;
-  height: 100dvh; /* 100% del alto dinámico del viewport (ignora la barra de navegación del cel) */
   width: 100vw;
+  /* Altura dinámica para móviles y total para PC */
+  min-height: 100vh;
+  height: 100dvh; 
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
   background-image: 
@@ -29,8 +29,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden; /* ¡ESTO EVITA EL SCROLL DE LA PÁGINA! */
-  overscroll-behavior: none; /* Evita el "rebote" en iPhone */
+  overflow: hidden; /* Evita scroll en la página principal */
 }
 
 .app-container {
@@ -39,32 +38,36 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 15px; /* Un pequeño margen para que no pegue a los bordes */
+  padding: 20px;
 }
 
-/* --- TARJETAS RESPONSIVAS --- */
+/* --- TARJETA INTELIGENTE --- */
 .card {
   background: var(--card-bg);
   border-radius: 20px;
-  padding: 1.5rem; /* Padding reducido para ganar espacio */
-  width: 100%;
-  max-width: 480px; 
-  max-height: 95dvh; /* Nunca será más alta que la pantalla */
+  padding: 2rem;
   
-  /* FLEXBOX MÁGICO PARA QUE TODO QUEPA */
+  /* LÓGICA DE TAMAÑO */
+  width: 100%;
+  max-width: 500px;       /* Ancho máximo en PC */
+  max-height: 95dvh;      /* Nunca más alta que la pantalla */
+  
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribuye espacio */
+  justify-content: center; /* Centrado vertical */
   
   text-align: center;
   position: relative;
   backdrop-filter: blur(10px);
   border: 1px solid #333;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
   animation: fadeIn 0.6s ease-out;
+  
+  /* Si el contenido es MUY largo en un cel muy pequeño, permite scroll interno */
+  overflow-y: auto; 
 }
 
-/* Efecto de luz superior */
+/* Efecto Neón Superior */
 .card::before {
   content: '';
   position: absolute;
@@ -74,56 +77,58 @@ body {
   opacity: 0.5;
 }
 
-/* --- TIPOGRAFÍA ADAPTABLE --- */
+/* --- TEXTOS --- */
 h1 {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 0.5rem; /* Menos margen */
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
   text-transform: uppercase;
   color: var(--primary);
-  font-size: 1.5rem; /* Tamaño base más pequeño para celular */
+  font-size: 1.5rem;
 }
 
-h2 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
-  margin-bottom: 10px;
+h2 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin-bottom: 1rem; }
+p { color: var(--text-dim); font-size: 0.9rem; margin: 5px 0 15px 0; }
+code { font-family: 'Courier New', monospace; color: var(--accent); background: #111; padding: 2px 5px; border-radius: 4px; font-size: 0.8rem; }
+
+/* --- CONTENEDOR DE IMAGEN (LA MAGIA) --- */
+.mini-preview-container, .success-image-container {
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+    overflow: hidden;
+    position: relative;
 }
 
-p { 
-    color: var(--text-dim); 
-    font-size: 0.8rem; 
-    margin: 5px 0 15px 0; /* Márgenes compactos */
+/* La imagen NUNCA se recorta (contain) y se centra */
+.mini-preview, .success-image-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
 }
 
-code { 
-    font-family: 'Courier New', monospace; 
-    color: var(--accent); 
-    background: #111; 
-    padding: 2px 5px; 
-    border-radius: 4px; 
-    font-size: 0.75rem; 
-}
-
-/* --- BOTONES COMPACTOS --- */
+/* --- BOTONES --- */
 .btn-primary {
   background: var(--primary);
   color: var(--bg-dark);
   border: none;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  padding: 12px; /* Botón un poco más delgado */
+  padding: 15px;
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
-  margin-top: 15px; /* Menos separación */
+  margin-top: 15px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-size: 0.9rem;
   transition: all 0.2s;
 }
-
 .btn-primary:active { transform: scale(0.98); }
 
 .btn-secondary {
@@ -131,121 +136,71 @@ code {
   border: 1px solid var(--primary);
   color: var(--primary);
   font-family: 'Orbitron', sans-serif;
-  padding: 10px;
+  padding: 12px;
   border-radius: 8px;
   width: 100%;
   margin-top: 10px;
   cursor: pointer;
-  font-size: 0.8rem;
 }
 
-/* --- DASHBOARD GRID --- */
-.options-grid {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-  flex-grow: 1; /* Ocupa el espacio disponible */
-  align-items: center;
-}
-
-.option-btn {
-  background: #0a0a0a;
-  border: 1px solid #333;
-  padding: 20px;
-  border-radius: 12px;
-  width: 100%;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-/* --- CHECKLIST COMPACTO --- */
+/* --- COMPONENTES INTERNOS --- */
 .checklist {
   text-align: left;
   margin-top: 15px;
   background: #0a0a0a;
-  padding: 10px 15px;
+  padding: 15px;
   border-radius: 12px;
   border: 1px solid #222;
-  overflow-y: auto; /* Si la lista es muy larga, scrolleable internamente */
-  max-height: 150px; /* Límite para que no empuje el botón fuera */
 }
 
-.check-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid #222;
-  font-size: 0.8rem;
+.check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
+.check-item:last-child { border-bottom: none; }
+
+.author-box { background: #111; border: 1px solid #444; padding: 10px; border-radius: 8px; margin: 10px 0; text-align: left; font-size: 0.8rem; }
+
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.info-box { background: #0a0a0a; border: 1px solid #444; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.info-label { font-size: 0.65rem; color: var(--text-dim); margin-bottom: 3px; letter-spacing: 1px; }
+.info-value { font-size: 0.8rem; color: var(--primary); font-weight: 600; }
+.options-grid { display: flex; justify-content: center; margin-top: 20px; }
+.option-btn { background: #0a0a0a; border: 1px solid #333; padding: 25px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
+
+/* --- MEDIA QUERY: ESTO CONTROLA LA DIFERENCIA PC vs MÓVIL --- */
+
+/* 💻 PANTALLAS GRANDES (PC / Laptop) */
+@media (min-width: 768px) {
+    .card {
+        padding: 3rem; /* Más espacio interno */
+        max-width: 550px;
+    }
+    .mini-preview-container, .success-image-container {
+        height: 250px; /* Altura fija y grande para que luzca la foto */
+    }
+    h1 { font-size: 1.8rem; }
 }
 
-/* --- IMAGENES QUE SE ADAPTAN (CRUCIAL) --- */
-.mini-preview-container, .success-image-container {
-    margin: 10px auto;
-    padding: 3px;
-    border-radius: 12px;
-    border: 1px solid var(--secondary);
-    background: #000;
+/* 📱 PANTALLAS PEQUEÑAS (Móviles) */
+@media (max-width: 767px) {
+    .card {
+        padding: 1.5rem;
+        height: auto;
+        max-height: 98dvh; /* Aprovecha casi toda la pantalla */
+        justify-content: flex-start; /* Empieza arriba para evitar cortes */
+    }
     
-    /* ESTO ES LO QUE HACE QUE NO HAYA SCROLL */
-    flex-shrink: 1; /* Permite que la imagen se encoja si falta espacio */
-    max-height: 25vh; /* Ocupa máximo el 25% de la pantalla */
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.mini-preview, .success-image-preview {
-    width: auto; 
-    height: 100%; /* Se ajusta a la altura del contenedor */
-    max-width: 100%;
-    object-fit: contain;
-    border-radius: 8px;
-}
-
-/* --- CAJAS DE INFORMACIÓN (GRID) --- */
-.author-box {
-    background: #111;
-    border: 1px solid #444;
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 10px 0;
-    text-align: left;
-    font-size: 0.75rem;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 5px;
-}
-
-.info-box {
-    background: #0a0a0a;
-    border: 1px solid #444;
-    border-radius: 8px;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.info-label { font-size: 0.6rem; color: var(--text-dim); margin-bottom: 2px; }
-.info-value { font-size: 0.75rem; color: var(--primary); font-weight: 600; }
-
-/* --- ANIMACIONES --- */
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-/* --- AJUSTES ESPECÍFICOS PARA MÓVILES MUY PEQUEÑOS --- */
-@media (max-height: 700px) {
-    .card { padding: 1rem; }
-    h1 { font-size: 1.2rem; margin-bottom: 0; }
-    .btn-primary { padding: 10px; margin-top: 10px; }
+    .mini-preview-container, .success-image-container {
+        /* Altura flexible: Mínimo 150px, Máximo 35% de la pantalla */
+        height: auto;
+        min-height: 150px;
+        max-height: 35vh; 
+        aspect-ratio: 16/9; /* Proporción agradable por defecto */
+    }
+    
+    /* Ajustar textos para ganar espacio */
+    h1 { font-size: 1.3rem; margin-top: 0; }
     .option-btn { padding: 15px; }
-    .checklist { max-height: 100px; padding: 5px 10px; }
+    .btn-primary { padding: 12px; margin-top: 10px; }
 }
+
+/* ANIMACIONES */
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
