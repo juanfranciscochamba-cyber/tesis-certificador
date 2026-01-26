@@ -137,21 +137,20 @@ function App() {
     }
   };
 
-  // --- FUNCIÓN CLAVE CON LA SOLUCIÓN DEL GAS ---
+  // --- FUNCIÓN BLINDADA CON 2 MILLONES DE GAS ---
   const iniciarProcesoCertificacion = async (hashParaCertificar) => {
     try {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contrato = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-        // ⚠️ AQUÍ ESTÁ EL TRUCO: { gasLimit: 500000 }
-        // Forzamos un límite alto para evitar el error "Out of Gas" en celulares.
-        // MetaMask usará lo necesario y te devolverá el resto.
-        const tx = await contrato.certificarImagen(hashParaCertificar, { gasLimit: 500000 });
+        // ⚠️ GAS LIMIT: 2,000,000
+        // Esto asegura que la transacción SIEMPRE pase a la primera.
+        const tx = await contrato.certificarImagen(hashParaCertificar, { gasLimit: 2000000 });
         
         setChecks(prev => ({ ...prev, signature: true }));
 
-        await tx.wait(); // Esperamos que la red confirme
+        await tx.wait(); // Esperamos confirmación
         setChecks(prev => ({ ...prev, blockchain: true }));
 
         const dateObj = new Date();
@@ -171,11 +170,11 @@ function App() {
     } catch (error) {
         console.error("Error detallado:", error);
         
-        // Manejo de errores amigable
+        // Manejo de errores
         if (error.code === 4001 || (error.info && error.info.error && error.info.error.code === 4001)) {
              alert("Cancelaste la operación en MetaMask.");
         } else {
-             alert("Ocurrió un error. Verifica que tengas saldo (POL) suficiente para el gas.");
+             alert("Ocurrió un error en la red. Intenta nuevamente (Gas insuficiente o error RPC).");
         }
         setView('dashboard');
     }
