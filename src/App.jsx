@@ -5,6 +5,7 @@ import './App.css';
 
 // --- CONFIGURACIÓN ---
 const CONTRACT_ADDRESS = "0xBbf0b19E33cCAee777c9B8E2C2F99062e07218F8"; 
+// RPC Público para el modo "Solo ver"
 const RPC_URL = "https://polygon-amoy.drpc.org";
 
 const CONTRACT_ABI = [
@@ -22,17 +23,47 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checks, setChecks] = useState({ hash: false, signature: false, blockchain: false });
 
-  // CONEXIÓN
+  // --- CONEXIÓN BLINDADA PARA MÓVIL (AUTO-SWITCH) ---
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
+        // 1. INTENTAR CAMBIAR A POLYGON AMOY
+        try {
+            await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: "0x13882" }], // ID 80002 en Hex
+            });
+        } catch (switchError) {
+            // Si la red no existe, la agregamos
+            if (switchError.code === 4902) {
+                await window.ethereum.request({
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                        chainId: "0x13882",
+                        rpcUrls: ["https://rpc-amoy.polygon.technology/"],
+                        chainName: "Polygon Amoy Testnet",
+                        nativeCurrency: { name: "POL", symbol: "POL", decimals: 18 },
+                        blockExplorerUrls: ["https://amoy.polygonscan.com/"]
+                    }]
+                });
+            }
+        }
+
+        // 2. CONECTAR
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         setWallet(signer.address);
         setIsAdmin(true);
         setView('dashboard');
-      } catch (err) { alert("Error conectando MetaMask"); }
-    } else { alert("Necesitas MetaMask."); }
+
+      } catch (err) { 
+        console.error(err);
+        alert("Error de conexión: Asegúrate de usar la App de MetaMask."); 
+      }
+    } else { 
+        // AVISO IMPORTANTE PARA MÓVIL
+        alert("⚠️ Para certificar desde el celular, debes abrir esta página DENTRO del navegador de la App MetaMask."); 
+    }
   };
 
   const enterPublicMode = () => {
@@ -80,17 +111,12 @@ function App() {
         const [autor, timestamp, existe] = await contrato.verificarImagen(hash);
 
         if (existe) {
-            // FORMATO DE FECHA Y HORA CON ZONA HORARIA (GMT-5 / UTC)
             const dateObj = new Date(Number(timestamp) * 1000);
-            
             const fechaSolo = dateObj.toLocaleDateString("es-ES", { 
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
             });
-            
             const horaSolo = dateObj.toLocaleTimeString("es-ES", { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                timeZoneName: 'shortOffset' // Esto agrega el "GMT-5"
+                hour: '2-digit', minute: '2-digit', timeZoneName: 'shortOffset' 
             });
             
             setFinalData({ autor, fecha: fechaSolo, hora: horaSolo, hash });
@@ -121,16 +147,12 @@ function App() {
         await tx.wait();
         setChecks(prev => ({ ...prev, blockchain: true }));
 
-        // FORMATO DE FECHA Y HORA ACTUAL CON ZONA HORARIA
         const dateObj = new Date();
         const fechaSolo = dateObj.toLocaleDateString("es-ES", { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
-        
         const horaSolo = dateObj.toLocaleTimeString("es-ES", { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            timeZoneName: 'shortOffset' // Esto agrega el "GMT-5"
+            hour: '2-digit', minute: '2-digit', timeZoneName: 'shortOffset' 
         });
 
         setFinalData({ autor: wallet, fecha: fechaSolo, hora: horaSolo, hash: hashParaCertificar });
@@ -141,6 +163,7 @@ function App() {
         }, 1000);
     } catch (error) {
         console.error(error);
+        alert("Operación cancelada o fallida.");
         setView('dashboard');
     }
   };
@@ -163,7 +186,7 @@ function App() {
             </button>
             
             <p style={{fontSize: '0.8rem', marginTop: '15px', opacity: 0.7}}>
-                *El modo validar no requiere MetaMask
+                *Validar no requiere conexión
             </p>
         </div>
       )}
@@ -235,16 +258,13 @@ function App() {
             <div style={{fontSize: '3rem', marginBottom: '10px'}}>🎉</div>
             <h1>¡Certificación Exitosa!</h1>
             
-            {/* VISTA PREVIA */}
             {previewUrl && <div className="success-image-container"><img src={previewUrl} className="success-image-preview" /></div>}
 
-            {/* CAJA DEL AUTOR */}
             <div className="author-box">
                 <span style={{opacity: 0.6, fontSize: '0.8rem'}}>Certificado por (Wallet):</span>
                 <code style={{display: 'block', marginTop: '5px', color: '#fff'}}>{finalData?.autor}</code>
             </div>
 
-            {/* GRID DE FECHA Y HORA */}
             <div className="info-grid">
                 <div className="info-box">
                     <span className="info-label">📅 FECHA</span>
@@ -274,22 +294,18 @@ function App() {
         <div className="card exists-card" style={{borderColor: '#00ff88'}}>
             <div style={{fontSize: '3rem', marginBottom: '10px'}}>✅</div>
             
-            {/* TÍTULO MEJORADO */}
             <h1 style={{color: '#00ff88', marginBottom: '5px', fontSize: '1.8rem'}}>IMAGEN CERTIFICADA</h1>
-            
             <p style={{fontSize: '0.9rem', opacity: 0.8, marginTop: '0', marginBottom: '20px'}}>
                 Este archivo cuenta con un registro inmutable en Polygon.
             </p>
             
             {previewUrl && <div className="success-image-container" style={{borderColor: '#00ff88'}}><img src={previewUrl} className="success-image-preview" /></div>}
 
-            {/* CAJA DEL AUTOR */}
             <div className="author-box" style={{borderColor: '#00ff88', background: 'rgba(0, 255, 136, 0.05)'}}>
                 <span style={{opacity: 0.8, fontSize: '0.8rem', color: '#00ff88'}}>👤 Certificado por (Autor):</span>
                 <code style={{display: 'block', marginTop: '5px', color: '#fff', fontSize: '0.85rem'}}>{finalData?.autor}</code>
             </div>
 
-            {/* GRID DE FECHA Y HORA */}
             <div className="info-grid">
                 <div className="info-box" style={{borderColor: '#00ff88'}}>
                     <span className="info-label" style={{color: '#00ff88'}}>📅 FECHA</span>
