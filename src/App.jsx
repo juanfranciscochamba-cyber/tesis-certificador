@@ -4,7 +4,9 @@ import confetti from 'canvas-confetti';
 import './App.css';
 
 // --- CONFIGURACIÓN ---
+// Dirección de tu contrato
 const CONTRACT_ADDRESS = "0xBbf0b19E33cCAee777c9B8E2C2F99062e07218F8"; 
+// RPC Público para el modo "Solo ver" (Invitados)
 const RPC_URL = "https://polygon-amoy.drpc.org";
 
 const CONTRACT_ABI = [
@@ -22,16 +24,18 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checks, setChecks] = useState({ hash: false, signature: false, blockchain: false });
 
-  // --- CONEXIÓN BLINDADA PARA MÓVIL (AUTO-SWITCH) ---
+  // --- CONEXIÓN BLINDADA PARA MÓVIL (AUTO-SWITCH DE RED) ---
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
+        // 1. INTENTAR CAMBIAR A POLYGON AMOY
         try {
             await window.ethereum.request({
                 method: "wallet_switchEthereumChain",
-                params: [{ chainId: "0x13882" }], 
+                params: [{ chainId: "0x13882" }], // 80002 en Hex
             });
         } catch (switchError) {
+            // Si la red no existe en la wallet, la agregamos automáticamente
             if (switchError.code === 4902) {
                 await window.ethereum.request({
                     method: "wallet_addEthereumChain",
@@ -45,16 +49,20 @@ function App() {
                 });
             }
         }
+        
+        // 2. CONECTAR
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         setWallet(signer.address);
         setIsAdmin(true);
         setView('dashboard');
+
       } catch (err) { 
         console.error(err);
-        alert("Error de conexión: Asegúrate de usar la App de MetaMask."); 
+        alert("Error de conexión: Si estás en celular, usa el navegador de MetaMask."); 
       }
     } else { 
+        // AVISO IMPORTANTE PARA MÓVIL
         alert("⚠️ Para certificar desde el celular, debes abrir esta página DENTRO del navegador de la App MetaMask."); 
     }
   };
@@ -74,6 +82,7 @@ function App() {
     setFinalData(null);
   };
 
+  // LÓGICA PRINCIPAL: PROCESAR IMAGEN
   const handleFile = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -87,6 +96,7 @@ function App() {
     }
   };
 
+  // VERIFICAR SI YA EXISTE EN BLOCKCHAIN
   const verificarExistencia = async (hash) => {
     try {
         setView('processing');
@@ -127,16 +137,21 @@ function App() {
     }
   };
 
+  // --- FUNCIÓN CLAVE CON LA SOLUCIÓN DEL GAS ---
   const iniciarProcesoCertificacion = async (hashParaCertificar) => {
     try {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contrato = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-        const tx = await contrato.certificarImagen(hashParaCertificar);
+        // ⚠️ AQUÍ ESTÁ EL TRUCO: { gasLimit: 500000 }
+        // Forzamos un límite alto para evitar el error "Out of Gas" en celulares.
+        // MetaMask usará lo necesario y te devolverá el resto.
+        const tx = await contrato.certificarImagen(hashParaCertificar, { gasLimit: 500000 });
+        
         setChecks(prev => ({ ...prev, signature: true }));
 
-        await tx.wait();
+        await tx.wait(); // Esperamos que la red confirme
         setChecks(prev => ({ ...prev, blockchain: true }));
 
         const dateObj = new Date();
@@ -154,8 +169,14 @@ function App() {
             setView('success');
         }, 1000);
     } catch (error) {
-        console.error(error);
-        alert("Operación cancelada o fallida.");
+        console.error("Error detallado:", error);
+        
+        // Manejo de errores amigable
+        if (error.code === 4001 || (error.info && error.info.error && error.info.error.code === 4001)) {
+             alert("Cancelaste la operación en MetaMask.");
+        } else {
+             alert("Ocurrió un error. Verifica que tengas saldo (POL) suficiente para el gas.");
+        }
         setView('dashboard');
     }
   };
@@ -196,7 +217,6 @@ function App() {
                 <label className="option-btn" style={{ width: '100%', maxWidth: '200px' }}>
                     <span className="icon">📸</span>
                     <span>Tomar Foto / Subir</span>
-                    {/* accept="image/*" permite cámara en celular */}
                     <input type="file" onChange={handleFile} accept="image/*" hidden />
                 </label>
             </div>
@@ -253,7 +273,7 @@ function App() {
             
             {previewUrl && <div className="success-image-container"><img src={previewUrl} className="success-image-preview" /></div>}
 
-            {/* --- BOTÓN DE DESCARGA (NUEVO) --- */}
+            {/* BOTÓN DESCARGAR */}
             <a href={previewUrl} download={`certificado_${finalData?.hash?.slice(0,6)}.png`} style={{textDecoration: 'none', width: '100%'}}>
                  <button className="btn-secondary" style={{marginTop: '0', marginBottom: '15px', borderColor: '#fff', color: '#fff'}}>
                     ⬇️ Guardar Imagen
@@ -301,7 +321,7 @@ function App() {
             
             {previewUrl && <div className="success-image-container" style={{borderColor: '#00ff88'}}><img src={previewUrl} className="success-image-preview" /></div>}
 
-            {/* --- BOTÓN DE DESCARGA (NUEVO) --- */}
+            {/* BOTÓN DESCARGAR */}
             <a href={previewUrl} download={`certificado_valido_${finalData?.hash?.slice(0,6)}.png`} style={{textDecoration: 'none', width: '100%'}}>
                  <button className="btn-secondary" style={{marginTop: '0', marginBottom: '15px', borderColor: '#00ff88', color: '#00ff88'}}>
                     ⬇️ Guardar Copia
