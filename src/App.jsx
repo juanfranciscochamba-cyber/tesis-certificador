@@ -24,7 +24,7 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checks, setChecks] = useState({ hash: false, signature: false, blockchain: false });
 
-  // --- CONEXIÓN BLINDADA PARA MÓVIL (AUTO-SWITCH DE RED) ---
+  // --- CONEXIÓN BLINDADA CON GUÍA PARA USUARIO NUEVO ---
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
@@ -62,8 +62,19 @@ function App() {
         alert("Error de conexión: Si estás en celular, usa el navegador de MetaMask."); 
       }
     } else { 
-        // AVISO IMPORTANTE PARA MÓVIL
-        alert("⚠️ Para certificar desde el celular, debes abrir esta página DENTRO del navegador de la App MetaMask."); 
+        // --- MEJORA: GUÍA PARA QUIEN NO TIENE METAMASK ---
+        const confirmar = confirm(
+            "⚠️ No detectamos una Billetera Web3 instalada.\n\n" +
+            "Para CERTIFICAR imágenes necesitas:\n" +
+            "1. Instalar la extensión 'MetaMask'.\n" +
+            "2. Crear una cuenta.\n" +
+            "3. Tener saldo de prueba (POL).\n\n" +
+            "¿Quieres ir a la página de descarga de MetaMask ahora?"
+        );
+        
+        if (confirmar) {
+            window.open("https://metamask.io/download/", "_blank");
+        }
     }
   };
 
@@ -145,7 +156,6 @@ function App() {
         const contrato = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
         // ⚠️ GAS LIMIT: 2,000,000
-        // Esto asegura que la transacción SIEMPRE pase a la primera.
         const tx = await contrato.certificarImagen(hashParaCertificar, { gasLimit: 2000000 });
         
         setChecks(prev => ({ ...prev, signature: true }));
@@ -193,12 +203,14 @@ function App() {
                 🔑 Certificar Imagen
             </button>
             
+            {/* BOTÓN EN MAYÚSCULAS */}
             <button onClick={enterPublicMode} className="btn-secondary" style={{borderColor: '#fff', color: '#fff'}}>
-                👁️ Validar Imagen
+                👁️ VALIDAR IMAGEN
             </button>
             
+            {/* TEXTO ACLARATORIO */}
             <p style={{fontSize: '0.8rem', marginTop: '15px', opacity: 0.7}}>
-                *Validar no requiere conexión
+                *Validar no requiere conexión con la billetera
             </p>
         </div>
       )}
@@ -210,7 +222,7 @@ function App() {
                 {isAdmin ? `Conectado: ${wallet.slice(0,6)}...` : "Modo Validación"}
             </div>
             
-            <h2>{isAdmin ? "Certificar nueva imagen" : "Validar Imagen"}</h2>
+            <h2>{isAdmin ? "Certificar nueva imagen" : "VALIDAR IMAGEN"}</h2>
             
             <div className="options-grid" style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
                 <label className="option-btn" style={{ width: '100%', maxWidth: '200px' }}>
