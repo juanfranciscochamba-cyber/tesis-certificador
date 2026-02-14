@@ -4,7 +4,7 @@ import confetti from 'canvas-confetti';
 import './App.css';
 
 // --- CONFIGURACIÓN ---
-// Dirección de tu contrato
+// Dirección de tu contrato en Polygon Amoy
 const CONTRACT_ADDRESS = "0xBbf0b19E33cCAee777c9B8E2C2F99062e07218F8"; 
 // RPC Público para el modo "Solo ver" (Invitados)
 const RPC_URL = "https://polygon-amoy.drpc.org";
@@ -23,6 +23,9 @@ function App() {
   const [finalData, setFinalData] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [checks, setChecks] = useState({ hash: false, signature: false, blockchain: false });
+  
+  // ESTADO NUEVO: Para mostrar/ocultar el menú del engranaje
+  const [showMenu, setShowMenu] = useState(false); 
 
   // --- CONEXIÓN BLINDADA CON GUÍA PARA USUARIO NUEVO ---
   const connectWallet = async () => {
@@ -62,7 +65,7 @@ function App() {
         alert("Error de conexión: Si estás en celular, usa el navegador de MetaMask."); 
       }
     } else { 
-        // --- MEJORA: GUÍA PARA QUIEN NO TIENE METAMASK ---
+        // --- GUÍA PARA QUIEN NO TIENE METAMASK ---
         const confirmar = confirm(
             "⚠️ No detectamos una Billetera Web3 instalada.\n\n" +
             "Para CERTIFICAR imágenes necesitas:\n" +
@@ -91,6 +94,7 @@ function App() {
     setFileHash(null);
     setPreviewUrl(null);
     setFinalData(null);
+    setShowMenu(false); // Cerrar menú al salir
   };
 
   // LÓGICA PRINCIPAL: PROCESAR IMAGEN
@@ -208,21 +212,49 @@ function App() {
                 👁️ VALIDAR IMAGEN
             </button>
             
-            {/* TEXTO ACLARATORIO */}
+            {/* TEXTO CORREGIDO */}
             <p style={{fontSize: '0.8rem', marginTop: '15px', opacity: 0.7}}>
-                *Validar no requiere conexión con la billetera
+                *Validar no requiere conexión con MetaMask
             </p>
         </div>
       )}
 
-      {/* DASHBOARD */}
+      {/* DASHBOARD (CON NUEVA BARRA SUPERIOR Y MENÚ) */}
       {view === 'dashboard' && (
         <div className="card dashboard-card">
-            <div style={{marginBottom: '20px', fontSize: '0.8rem', opacity: 0.7}}>
-                {isAdmin ? `Conectado: ${wallet.slice(0,6)}...` : "Modo Validación"}
-            </div>
             
-            <h2>{isAdmin ? "Certificar nueva imagen" : "VALIDAR IMAGEN"}</h2>
+            {/* --- BARRA SUPERIOR (HEADER) --- */}
+            <div className="card-header">
+                <h3 className="header-title">🔒 SECURI CERTIFY</h3>
+                
+                {/* BOTÓN DE ENGRANAJE (Solo si está conectado como admin) */}
+                {isAdmin && (
+                    <div style={{position: 'relative'}}>
+                        <button onClick={() => setShowMenu(!showMenu)} className="settings-btn">
+                            ⚙️
+                        </button>
+
+                        {/* --- MENÚ DESPLEGABLE --- */}
+                        {showMenu && (
+                            <div className="wallet-menu">
+                                <h3>Cuenta Conectada</h3>
+                                <div className="wallet-address-box">
+                                    <span style={{color: '#00ff88', fontSize: '1.2rem', marginRight: '5px'}}>●</span>
+                                    {wallet}
+                                </div>
+                                <div style={{fontSize: '0.75rem', color: '#666', marginBottom: '15px'}}>
+                                    Red: Polygon Amoy Testnet
+                                </div>
+                                <button onClick={logout} className="menu-btn-logout">
+                                    🔌 Desconectar
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            <h2 style={{marginTop: '10px'}}>{isAdmin ? "Certificar nueva imagen" : "VALIDAR IMAGEN"}</h2>
             
             <div className="options-grid" style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
                 <label className="option-btn" style={{ width: '100%', maxWidth: '200px' }}>
@@ -232,9 +264,12 @@ function App() {
                 </label>
             </div>
              
-             <button onClick={logout} className="btn-secondary" style={{marginTop: '30px', fontSize: '0.8rem'}}>
-                ← Volver al Inicio
-             </button>
+             {/* El botón de volver solo aparece si es invitado (Admin usa el menú) */}
+             {!isAdmin && (
+                 <button onClick={logout} className="btn-secondary" style={{marginTop: '30px', fontSize: '0.8rem'}}>
+                    ← Volver al Inicio
+                 </button>
+             )}
         </div>
       )}
 
