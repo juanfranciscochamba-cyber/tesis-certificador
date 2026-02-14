@@ -2,331 +2,253 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
 
 :root {
-  --bg-dark: #000000;         
-  --card-bg: rgba(20, 20, 20, 0.95); 
+  --bg-dark: #050505;         
+  --card-bg: rgba(15, 15, 15, 0.95); 
   --primary: #ffffff;        
-  --secondary: #888888;       
-  --accent: #00ff88;          
+  --neon-green: #00ff88;     
   --error: #ff3333;
   --text-dim: #a0a0a0;
 }
 
 * { box-sizing: border-box; }
 
-/* --- ESTRUCTURA PRINCIPAL --- */
 body {
   margin: 0;
   width: 100%;
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
+  /* Fondo de cuadrícula sutil como en tu foto */
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 30px 30px; 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px; 
   color: var(--primary);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 40px;      
-  padding-bottom: 40px;   
+  align-items: center; /* Centrado total */
+  padding: 20px;
 }
 
 .app-container {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: 10px;
 }
 
-/* --- TARJETA CLÁSICA --- */
+/* --- TARJETA PRINCIPAL --- */
 .card {
   background: var(--card-bg);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 2.5rem;
   width: 100%;
-  max-width: 500px;
-  height: auto;
+  max-width: 550px;
   text-align: center;
-  position: relative;
-  backdrop-filter: blur(10px);
   border: 1px solid #333;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-  animation: fadeIn 0.6s ease-out;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Efecto Neón Superior */
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 20%; right: 20%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
-  opacity: 0.5;
+/* Estilos específicos para tarjetas de Éxito/Existente (Bordes Verdes) */
+.exists-card, .success-card {
+  border: 1px solid var(--neon-green);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
 }
 
-/* --- NUEVA BARRA SUPERIOR (HEADER) --- */
+.error-card {
+  border: 1px solid var(--error);
+  box-shadow: 0 0 30px rgba(255, 51, 51, 0.15);
+}
+
+/* --- HEADER Y ENGRANAJE --- */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid #333;
 }
+.exists-card .card-header { border-bottom: 1px solid rgba(0, 255, 136, 0.3); }
 
 .header-title {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1rem;
-  color: var(--primary);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
   margin: 0;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* BOTÓN DE ENGRANAJE */
 .settings-btn {
   background: transparent;
   border: none;
-  color: var(--text-dim);
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   cursor: pointer;
+  transition: transform 0.3s;
   padding: 5px;
-  transition: all 0.3s;
-  border-radius: 50%;
 }
-.settings-btn:hover {
-  color: var(--primary);
-  background: rgba(255,255,255,0.1);
-  transform: rotate(90deg);
-}
+.settings-btn:hover { transform: rotate(90deg) scale(1.1); }
 
-/* MENÚ FLOTANTE DE BILLETERA */
+/* MENÚ DESPLEGABLE */
 .wallet-menu {
   position: absolute;
-  top: 45px;
-  right: -10px;
+  top: 60px;
+  right: 20px;
   width: 260px;
   background: #111;
-  border: 1px solid #444;
+  border: 1px solid #555;
   border-radius: 12px;
   padding: 15px;
-  z-index: 100;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-  animation: slideDown 0.2s ease-out;
-  text-align: left;
+  z-index: 200;
+  box-shadow: 0 10px 40px rgba(0,0,0,1);
 }
 
-.wallet-menu h3 {
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  margin: 0 0 10px 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.wallet-address-box {
-  background: #000;
-  padding: 10px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.75rem;
-  color: var(--primary);
-  margin-bottom: 15px;
-  word-break: break-all;
-  border: 1px solid #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.menu-btn-logout {
-  width: 100%;
-  background: rgba(255, 50, 50, 0.1);
-  border: 1px solid rgba(255, 50, 50, 0.3);
-  color: #ff5555;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.75rem;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  font-weight: bold;
-}
-.menu-btn-logout:hover {
-  background: rgba(255, 50, 50, 0.2);
-  border-color: #ff5555;
-}
-
-/* --- TEXTOS GENERALES --- */
+/* --- TEXTOS --- */
 h1 {
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
   letter-spacing: 2px;
-  margin-bottom: 0.5rem;
   text-transform: uppercase;
-  color: var(--primary);
-  font-size: 1.6rem;
+  margin-bottom: 10px;
+  font-size: 1.8rem;
 }
+p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
 
-h2 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin-bottom: 1rem; }
-p { color: var(--text-dim); font-size: 0.9rem; margin: 5px 0 20px 0; }
-code { font-family: 'Courier New', monospace; color: var(--accent); background: #111; padding: 2px 5px; border-radius: 4px; font-size: 0.8rem; }
-
-/* --- CONTENEDOR DE IMAGEN --- */
-.mini-preview-container, .success-image-container {
-    width: 100%;
-    height: 350px; 
-    background: #000;
-    border-radius: 12px;
-    border: 1px solid #333;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
-    overflow: hidden;
-}
-
-.mini-preview, .success-image-preview {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; 
-}
-
-/* --- BOTONES PRINCIPALES --- */
+/* --- BOTONES (Estilo exacto de tu imagen) --- */
 .btn-primary {
   background: var(--primary);
-  color: var(--bg-dark);
+  color: #000;
   border: none;
   font-family: 'Orbitron', sans-serif;
   font-weight: 700;
-  padding: 15px;
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 12px;
   cursor: pointer;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 15px;
+  font-size: 1rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
   transition: all 0.2s;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
-.btn-primary:active { transform: scale(0.98); }
+.btn-primary:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255,255,255,0.4); }
 
 .btn-secondary {
   background: transparent;
   border: 1px solid var(--primary);
   color: var(--primary);
   font-family: 'Orbitron', sans-serif;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 12px;
   width: 100%;
   margin-top: 15px;
   cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  text-transform: uppercase;
 }
+.btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-/* --- INPUT DE ARCHIVO (CAJA GRANDE) --- */
-.options-grid { display: flex; justify-content: center; margin-top: 20px; }
-.option-btn { background: #0a0a0a; border: 1px solid #333; padding: 30px; border-radius: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; transition: all 0.3s; }
-.option-btn:hover { border-color: var(--primary); transform: translateY(-3px); }
+/* --- PREVISUALIZACIÓN DE IMAGEN --- */
+.preview-box {
+  width: 100%;
+  height: 250px;
+  background: #000;
+  border-radius: 12px;
+  border: 1px solid #333;
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.exists-card .preview-box { border-color: var(--neon-green); }
+.preview-img { width: 100%; height: 100%; object-fit: contain; }
 
-/* --- COMPONENTES DE CHECKLIST Y DATOS --- */
+/* --- CAJAS DE DATOS (Estilo WhatsApp Image) --- */
+.author-box {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #444;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: left;
+  margin-bottom: 15px;
+}
+.exists-card .author-box { border-color: var(--neon-green); }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.info-item {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.exists-card .info-item { border-color: var(--neon-green); }
+
+.label { font-size: 0.75rem; font-weight: bold; margin-bottom: 5px; opacity: 0.8; }
+.exists-card .label, .exists-card .value { color: var(--neon-green); } 
+.success-card .label, .success-card .value { color: #fff; }
+
+.value { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; }
+
+/* --- CHECKLIST (Proceso de Carga) --- */
 .checklist {
+  background: #000;
+  border-radius: 12px;
+  padding: 20px;
   text-align: left;
   margin-top: 20px;
-  background: #0a0a0a;
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid #222;
+  border: 1px solid #333;
 }
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #222;
+  opacity: 0.5; /* Apagado por defecto */
+  transition: all 0.5s ease;
+}
+.check-row.active { opacity: 1; } /* Se ilumina cuando toca */
+.check-row:last-child { border-bottom: none; }
 
-.check-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
-.check-item:last-child { border-bottom: none; }
+.check-icon { font-size: 1.2rem; }
 
-.author-box { background: #111; border: 1px solid #444; padding: 12px; border-radius: 8px; margin: 15px 0; text-align: left; font-size: 0.8rem; }
-
-.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-.info-box { background: #0a0a0a; border: 1px solid #444; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.info-label { font-size: 0.7rem; color: var(--text-dim); margin-bottom: 3px; letter-spacing: 1px; }
-.info-value { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
-
-/* --- VENTANA EMERGENTE (MODAL METAMASK) --- */
+/* --- MODAL (Ventana Emergente) --- */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0,0,0,0.9);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
-  animation: fadeIn 0.3s ease;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
 }
-
 .modal-content {
   background: #111;
-  border: 1px solid var(--primary);
-  padding: 30px;
-  border-radius: 16px;
+  border: 1px solid #fff;
+  padding: 40px;
+  border-radius: 20px;
   width: 90%;
-  max-width: 450px;
+  max-width: 480px;
   text-align: center;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
   position: relative;
 }
+.modal-buttons { display: flex; gap: 15px; margin-top: 30px; }
+.modal-yes { background: #fff; color: #000; border: none; padding: 12px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.modal-no { background: transparent; border: 1px solid #fff; color: #fff; padding: 12px; flex: 1; border-radius: 8px; cursor: pointer; }
 
-.modal-btn-group {
-  display: flex;
-  gap: 15px;
-  margin-top: 25px;
-  justify-content: center;
-}
-
-.modal-btn-yes {
-  background: var(--primary);
-  color: #000;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  flex: 1;
-}
-
-.modal-btn-no {
-  background: transparent;
-  border: 1px solid #666;
-  color: #fff;
-  padding: 12px 25px;
-  border-radius: 8px;
-  cursor: pointer;
-  flex: 1;
-}
-
-.step-list {
-  text-align: left;
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #ccc;
-}
-.step-list li { margin-bottom: 12px; }
-.step-link { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); }
-
-.close-modal {
-  position: absolute;
-  top: 10px; right: 15px;
-  background: none; border: none;
-  color: #666; font-size: 1.5rem;
-  cursor: pointer;
-}
-
-/* --- ANIMACIONES Y MÓVIL --- */
-@media (max-width: 600px) {
-    .card { padding: 1.5rem; }
-    .mini-preview-container, .success-image-container { height: 250px; }
-    h1 { font-size: 1.4rem; }
-}
-
-@keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.step-list { text-align: left; margin-top: 20px; color: #ccc; line-height: 1.6; }
+.step-list a { color: var(--neon-green); }
+.close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 1.5rem; cursor: pointer; }
