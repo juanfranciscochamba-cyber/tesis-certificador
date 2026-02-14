@@ -18,7 +18,7 @@ body {
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
-  /* Fondo de cuadrícula sutil como en tu foto */
+  /* Fondo de cuadrícula tecnológica */
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
@@ -26,7 +26,7 @@ body {
   color: var(--primary);
   display: flex;
   justify-content: center;
-  align-items: center; /* Centrado total */
+  align-items: center; /* Centrado vertical y horizontal */
   padding: 20px;
 }
 
@@ -47,39 +47,51 @@ body {
   border: 1px solid #333;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* Permitir que el menú flote fuera si es necesario */
 }
 
-/* Estilos específicos para tarjetas de Éxito/Existente (Bordes Verdes) */
+/* Bordes de colores según estado */
 .exists-card, .success-card {
   border: 1px solid var(--neon-green);
   box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
 }
-
 .error-card {
   border: 1px solid var(--error);
   box-shadow: 0 0 30px rgba(255, 51, 51, 0.15);
 }
 
-/* --- HEADER Y ENGRANAJE --- */
+/* --- HEADER (TÍTULO CENTRADO + ENGRANAJE) --- */
 .card-header {
+  position: relative; /* Clave para el engranaje flotante */
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* ESTO CENTRA EL TÍTULO */
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   padding-bottom: 15px;
   border-bottom: 1px solid #333;
+  min-height: 50px;
 }
+
 .exists-card .card-header { border-bottom: 1px solid rgba(0, 255, 136, 0.3); }
 
-.header-title {
+.header-title-center {
   font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.3rem; 
   letter-spacing: 1px;
-  margin: 0;
+  color: var(--primary);
   display: flex;
   align-items: center;
   gap: 10px;
+  font-weight: 700;
+}
+
+/* EL ENGRANAJE FLOTANTE */
+.settings-floater {
+  position: absolute; /* Lo sacamos del flujo normal */
+  right: 0;           /* Pegado a la derecha */
+  top: 50%;           /* Centrado verticalmente */
+  transform: translateY(-50%);
+  z-index: 10;
 }
 
 .settings-btn {
@@ -89,14 +101,15 @@ body {
   cursor: pointer;
   transition: transform 0.3s;
   padding: 5px;
+  color: #fff;
 }
 .settings-btn:hover { transform: rotate(90deg) scale(1.1); }
 
 /* MENÚ DESPLEGABLE */
 .wallet-menu {
   position: absolute;
-  top: 60px;
-  right: 20px;
+  top: 40px;
+  right: 0;
   width: 260px;
   background: #111;
   border: 1px solid #555;
@@ -104,6 +117,7 @@ body {
   padding: 15px;
   z-index: 200;
   box-shadow: 0 10px 40px rgba(0,0,0,1);
+  text-align: left;
 }
 
 /* --- TEXTOS --- */
@@ -117,7 +131,7 @@ h1 {
 }
 p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
 
-/* --- BOTONES (Estilo exacto de tu imagen) --- */
+/* --- BOTONES --- */
 .btn-primary {
   background: var(--primary);
   color: #000;
@@ -151,7 +165,7 @@ p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-/* --- PREVISUALIZACIÓN DE IMAGEN --- */
+/* --- PREVISUALIZACIÓN IMAGEN --- */
 .preview-box {
   width: 100%;
   height: 250px;
@@ -165,9 +179,10 @@ p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
   overflow: hidden;
 }
 .exists-card .preview-box { border-color: var(--neon-green); }
+.error-card .preview-box { border-color: var(--error); }
 .preview-img { width: 100%; height: 100%; object-fit: contain; }
 
-/* --- CAJAS DE DATOS (Estilo WhatsApp Image) --- */
+/* --- CAJAS DE DATOS --- */
 .author-box {
   background: rgba(0, 0, 0, 0.6);
   border: 1px solid #444;
@@ -201,7 +216,7 @@ p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
 
 .value { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; }
 
-/* --- CHECKLIST (Proceso de Carga) --- */
+/* --- CHECKLIST (ANIMACIÓN DE CARGA) --- */
 .checklist {
   background: #000;
   border-radius: 12px;
@@ -219,12 +234,11 @@ p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
   opacity: 0.5; /* Apagado por defecto */
   transition: all 0.5s ease;
 }
-.check-row.active { opacity: 1; } /* Se ilumina cuando toca */
+.check-row.active { opacity: 1; transform: translateX(5px); } /* Se ilumina y se mueve un poco */
 .check-row:last-child { border-bottom: none; }
-
 .check-icon { font-size: 1.2rem; }
 
-/* --- MODAL (Ventana Emergente) --- */
+/* --- MODAL (VENTANA EMERGENTE) --- */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -244,11 +258,19 @@ p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
   max-width: 480px;
   text-align: center;
   position: relative;
+  box-shadow: 0 0 50px rgba(255,255,255,0.1);
 }
 .modal-buttons { display: flex; gap: 15px; margin-top: 30px; }
 .modal-yes { background: #fff; color: #000; border: none; padding: 12px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; }
 .modal-no { background: transparent; border: 1px solid #fff; color: #fff; padding: 12px; flex: 1; border-radius: 8px; cursor: pointer; }
 
 .step-list { text-align: left; margin-top: 20px; color: #ccc; line-height: 1.6; }
-.step-list a { color: var(--neon-green); }
+.step-list a { color: var(--neon-green); text-decoration: none; border-bottom: 1px solid var(--neon-green); }
 .close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 1.5rem; cursor: pointer; }
+
+/* --- RESPONSIVE (MÓVIL) --- */
+@media (max-width: 600px) {
+    .card { padding: 1.5rem; }
+    .header-title-center { font-size: 1.1rem; }
+    h1 { font-size: 1.4rem; }
+}
