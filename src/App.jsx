@@ -21,25 +21,21 @@ function App() {
   const [finalData, setFinalData] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   
-  // ESTADOS DE PROGRESO VISUAL (Checklist)
-  const [progress, setProgress] = useState({ 
-      hashing: false, 
-      signing: false, 
-      mining: false, 
-      done: false 
-  });
-
-  // ESTADOS DE UI (Menú y Modal)
+  // ESTADOS DE PROGRESO
+  const [progress, setProgress] = useState({ hashing: false, signing: false, mining: false, done: false });
+  // ESTADOS DE UI
   const [showMenu, setShowMenu] = useState(false); 
   const [showModal, setShowModal] = useState(false); 
   const [modalStep, setModalStep] = useState(1); 
 
-  // --- COMPONENTE HEADER (REUTILIZABLE) ---
+  // --- COMPONENTE HEADER (Ahora visible en todas las pantallas) ---
   const Header = () => (
       <div className="card-header">
           <div className="header-title">
-              🔒 SECURI CERTIFY
+             <span style={{fontSize:'1.2rem', marginRight:'10px'}}>🔒</span> SECURI CERTIFY
           </div>
+          
+          {/* El engranaje se muestra si es Admin (Conectado) */}
           {isAdmin && (
               <div style={{position: 'relative'}}>
                   <button onClick={() => setShowMenu(!showMenu)} className="settings-btn" style={{color: view === 'exists' ? '#00ff88' : '#fff'}}>
@@ -49,8 +45,8 @@ function App() {
                       <div className="wallet-menu">
                           <p style={{margin: '0 0 5px 0', fontSize: '0.7rem', color: '#888'}}>CUENTA CONECTADA</p>
                           <code style={{display:'block', marginBottom:'15px', color: '#fff'}}>{wallet.slice(0,10)}...</code>
-                          <button onClick={logout} className="btn-secondary" style={{padding: '8px', fontSize: '0.8rem', marginTop: '0', borderColor: '#ff3333', color: '#ff3333'}}>
-                              🔌 Desconectar
+                          <button onClick={logout} className="btn-secondary" style={{padding: '10px', fontSize: '0.75rem', marginTop: '0', borderColor: '#ff5555', color: '#ff5555'}}>
+                              🔄 Cerrar Sesión / Cambiar
                           </button>
                       </div>
                   )}
@@ -59,7 +55,18 @@ function App() {
       </div>
   );
 
-  // --- LÓGICA DE CONEXIÓN ---
+  // --- LÓGICA DE CONEXIÓN INTELIGENTE ---
+  const checkConnectionAndOpen = async () => {
+    // Si MetaMask ya tiene una cuenta seleccionada, saltamos la pregunta
+    if (window.ethereum && window.ethereum.selectedAddress) {
+        connectWallet();
+    } else {
+        // Si no, preguntamos
+        setModalStep(1); 
+        setShowModal(true);
+    }
+  };
+
   const connectWallet = async () => {
     setShowModal(false);
     if (window.ethereum) {
@@ -93,8 +100,6 @@ function App() {
        alert("No se detectó MetaMask.");
     }
   };
-
-  const openCertifyModal = () => { setModalStep(1); setShowModal(true); };
   
   const enterPublicMode = () => { setWallet("Invitado"); setIsAdmin(false); setView('dashboard'); };
 
@@ -108,8 +113,6 @@ function App() {
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
-      
-      // INICIA PROCESO VISUAL: 1. Hashing
       setView('processing');
       setProgress({ hashing: true, signing: false, mining: false, done: false });
       
@@ -118,7 +121,6 @@ function App() {
       const hash = ethers.keccak256(bytes);
       setFileHash(hash);
       
-      // Pequeña pausa para que se vea la animación
       setTimeout(() => verificarExistencia(hash), 1500); 
     }
   };
@@ -135,11 +137,12 @@ function App() {
         const [autor, timestamp, existe] = await contrato.verificarImagen(hash);
 
         if (existe) {
+            // FECHA CON ZONA HORARIA
             const dateObj = new Date(Number(timestamp) * 1000);
             setFinalData({ 
                 autor, 
                 fecha: dateObj.toLocaleDateString("es-ES", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), 
-                hora: dateObj.toLocaleTimeString("es-ES"), 
+                hora: dateObj.toLocaleTimeString("es-ES", { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }), // Agrega GMT/UTC
                 hash 
             });
             setView('exists');
@@ -157,28 +160,22 @@ function App() {
 
   const iniciarProcesoCertificacion = async (hashParaCertificar) => {
     try {
-        // PASO 2: Firmando
         setProgress({ hashing: true, signing: true, mining: false, done: false });
-
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contrato = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
         const tx = await contrato.certificarImagen(hashParaCertificar, { gasLimit: 2000000 });
         
-        // PASO 3: Minando en Blockchain
         setProgress({ hashing: true, signing: true, mining: true, done: false });
-
         await tx.wait(); 
-        
-        // FINAL: Terminado
         setProgress({ hashing: true, signing: true, mining: true, done: true });
 
         const dateObj = new Date();
         setFinalData({ 
             autor: wallet, 
             fecha: dateObj.toLocaleDateString("es-ES", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), 
-            hora: dateObj.toLocaleTimeString("es-ES"), 
+            hora: dateObj.toLocaleTimeString("es-ES", { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }), 
             hash: hashParaCertificar 
         });
 
@@ -188,19 +185,18 @@ function App() {
         }, 1000);
     } catch (error) {
         console.error(error);
-        setView('dashboard'); // Volver si cancela
+        setView('dashboard'); 
     }
   };
 
   return (
     <div className="app-container">
       
-      {/* --- MODAL DE AYUDA (Para nuevos usuarios) --- */}
+      {/* --- MODAL --- */}
       {showModal && (
         <div className="modal-overlay">
             <div className="modal-content">
                 <button className="close-modal" onClick={() => setShowModal(false)}>×</button>
-                
                 {modalStep === 1 ? (
                     <>
                         <h2>🦊 Conectar Billetera</h2>
@@ -225,14 +221,14 @@ function App() {
         </div>
       )}
 
-      {/* --- VISTA 1: LOGIN (Diseño imagen negra) --- */}
+      {/* --- VISTA 1: LOGIN --- */}
       {view === 'login' && (
         <div className="card">
-            <div style={{fontSize: '2rem'}}>🔒</div>
-            <h1>SECURI CERTIFY</h1>
-            <p>Sistema de Atestación de Contenido Sintético</p>
+            <Header /> {/* Header desde el inicio */}
             
-            <button onClick={openCertifyModal} className="btn-primary">
+            <p style={{marginTop: '20px'}}>Sistema de Atestación de Contenido Sintético</p>
+            
+            <button onClick={checkConnectionAndOpen} className="btn-primary">
                 🔑 CERTIFICAR IMAGEN
             </button>
             <button onClick={enterPublicMode} className="btn-secondary">
@@ -242,10 +238,10 @@ function App() {
         </div>
       )}
 
-      {/* --- DASHBOARD (Subir Archivo) --- */}
+      {/* --- DASHBOARD --- */}
       {view === 'dashboard' && (
         <div className="card">
-            <Header /> {/* Aquí va el engranaje */}
+            <Header />
             
             <h2>{isAdmin ? "Certificar Nueva Imagen" : "Validar Imagen"}</h2>
             <p>Selecciona el archivo para generar su huella digital.</p>
@@ -266,28 +262,24 @@ function App() {
         </div>
       )}
 
-      {/* --- PROCESANDO (Checklist Animado) --- */}
+      {/* --- PROCESANDO --- */}
       {view === 'processing' && (
         <div className="card">
+             <Header />
              <h2>Procesando...</h2>
              {previewUrl && <div className="preview-box"><img src={previewUrl} className="preview-img" /></div>}
              
              <div className="checklist">
-                 {/* Paso 1: Hash */}
                  <div className={`check-row ${progress.hashing ? 'active' : ''}`}>
                      <span className="check-icon">{progress.hashing ? '✅' : '⏳'}</span>
                      <span>Generando Huella Digital (Hash)</span>
                  </div>
-                 
-                 {/* Paso 2: Firma (Solo Admin) */}
                  {isAdmin && (
                      <div className={`check-row ${progress.signing ? 'active' : ''}`}>
                         <span className="check-icon">{progress.signing ? '✅' : '⏳'}</span>
                         <span>Firmando Transacción (MetaMask)</span>
                      </div>
                  )}
-
-                 {/* Paso 3: Blockchain */}
                  <div className={`check-row ${progress.mining ? 'active' : ''}`}>
                      <span className="check-icon">{progress.mining ? '✅' : '⏳'}</span>
                      <span>Confirmando en Polygon Blockchain</span>
@@ -296,12 +288,11 @@ function App() {
         </div>
       )}
 
-      {/* --- ÉXITO / EXISTE (Diseño Verde de WhatsApp) --- */}
+      {/* --- ÉXITO / EXISTE --- */}
       {(view === 'success' || view === 'exists') && (
          <div className={`card ${view === 'exists' ? 'exists-card' : 'success-card'}`}>
-            <Header /> {/* ¡Engranaje aquí también! */}
+            <Header />
             
-            {/* Título condicional */}
             {view === 'success' ? (
                 <>
                     <div style={{fontSize:'3rem'}}>🎉</div>
@@ -316,7 +307,6 @@ function App() {
 
             {previewUrl && <div className="preview-box"><img src={previewUrl} className="preview-img" /></div>}
 
-            {/* Datos estilo Grid (Como en la foto) */}
             <div className="author-box">
                 <div className="label" style={{color: view==='exists'?'#00ff88':'#fff'}}>👤 Certificado por (Autor):</div>
                 <code style={{color:'#fff', wordBreak:'break-all'}}>{finalData?.autor}</code>
@@ -338,7 +328,6 @@ function App() {
                 <code style={{color:'#aaa', fontSize:'0.7rem'}}>{finalData?.hash}</code>
             </div>
 
-            {/* Botones de acción */}
             <a href={previewUrl} download={`certificado_${finalData?.hash.slice(0,6)}.png`} style={{textDecoration:'none'}}>
                  <button className="btn-primary">⬇️ Descargar Copia</button>
             </a>
@@ -352,6 +341,7 @@ function App() {
       {/* --- NO ENCONTRADO --- */}
       {view === 'not-found' && (
         <div className="card error-card">
+            <Header />
             <div style={{fontSize:'3rem'}}>❌</div>
             <h1 style={{color:'#ff3333'}}>NO CERTIFICADA</h1>
             <p>Esta imagen no tiene registro en la Blockchain.</p>
