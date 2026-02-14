@@ -18,7 +18,6 @@ body {
   min-height: 100vh;
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-dark);
-  /* Fondo de cuadrícula tecnológica */
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
@@ -26,17 +25,13 @@ body {
   color: var(--primary);
   display: flex;
   justify-content: center;
-  align-items: center; /* Centrado vertical y horizontal */
+  align-items: center; 
   padding: 20px;
 }
 
-.app-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
+.app-container { width: 100%; display: flex; justify-content: center; }
 
-/* --- TARJETA PRINCIPAL --- */
+/* --- TARJETA --- */
 .card {
   background: var(--card-bg);
   border-radius: 24px;
@@ -47,31 +42,22 @@ body {
   border: 1px solid #333;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
   position: relative;
-  overflow: visible; /* Permitir que el menú flote fuera si es necesario */
+  overflow: visible;
 }
+.exists-card, .success-card { border: 1px solid var(--neon-green); box-shadow: 0 0 30px rgba(0, 255, 136, 0.15); }
+.error-card { border: 1px solid var(--error); box-shadow: 0 0 30px rgba(255, 51, 51, 0.15); }
 
-/* Bordes de colores según estado */
-.exists-card, .success-card {
-  border: 1px solid var(--neon-green);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
-}
-.error-card {
-  border: 1px solid var(--error);
-  box-shadow: 0 0 30px rgba(255, 51, 51, 0.15);
-}
-
-/* --- HEADER (TÍTULO CENTRADO + ENGRANAJE) --- */
+/* --- HEADER --- */
 .card-header {
-  position: relative; /* Clave para el engranaje flotante */
+  position: relative; 
   display: flex;
-  justify-content: center; /* ESTO CENTRA EL TÍTULO */
+  justify-content: center; /* TÍTULO CENTRADO */
   align-items: center;
   margin-bottom: 25px;
   padding-bottom: 15px;
   border-bottom: 1px solid #333;
   min-height: 50px;
 }
-
 .exists-card .card-header { border-bottom: 1px solid rgba(0, 255, 136, 0.3); }
 
 .header-title-center {
@@ -85,190 +71,82 @@ body {
   font-weight: 700;
 }
 
-/* EL ENGRANAJE FLOTANTE */
 .settings-floater {
-  position: absolute; /* Lo sacamos del flujo normal */
-  right: 0;           /* Pegado a la derecha */
-  top: 50%;           /* Centrado verticalmente */
-  transform: translateY(-50%);
-  z-index: 10;
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 10;
 }
-
 .settings-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.4rem;
-  cursor: pointer;
-  transition: transform 0.3s;
-  padding: 5px;
-  color: #fff;
+  background: transparent; border: none; font-size: 1.4rem; cursor: pointer; transition: transform 0.3s; padding: 5px; color: #fff;
 }
 .settings-btn:hover { transform: rotate(90deg) scale(1.1); }
 
-/* MENÚ DESPLEGABLE */
 .wallet-menu {
-  position: absolute;
-  top: 40px;
-  right: 0;
-  width: 260px;
-  background: #111;
-  border: 1px solid #555;
-  border-radius: 12px;
-  padding: 15px;
-  z-index: 200;
-  box-shadow: 0 10px 40px rgba(0,0,0,1);
-  text-align: left;
+  position: absolute; top: 40px; right: 0; width: 260px;
+  background: #111; border: 1px solid #555; border-radius: 12px; padding: 15px; z-index: 200; box-shadow: 0 10px 40px rgba(0,0,0,1); text-align: left;
 }
 
-/* --- TEXTOS --- */
-h1 {
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  font-size: 1.8rem;
-}
+h1 { font-family: 'Orbitron', sans-serif; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; font-size: 1.8rem; }
 p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; }
 
 /* --- BOTONES --- */
 .btn-primary {
-  background: var(--primary);
-  color: #000;
-  border: none;
-  font-family: 'Orbitron', sans-serif;
-  font-weight: 700;
-  padding: 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 15px;
-  font-size: 1rem;
-  text-transform: uppercase;
-  transition: all 0.2s;
+  background: var(--primary); color: #000; border: none; font-family: 'Orbitron', sans-serif; font-weight: 700; padding: 16px; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 15px; font-size: 1rem; text-transform: uppercase; transition: all 0.2s;
 }
 .btn-primary:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255,255,255,0.4); }
 
 .btn-secondary {
-  background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  font-family: 'Orbitron', sans-serif;
-  padding: 16px;
-  border-radius: 12px;
-  width: 100%;
-  margin-top: 15px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
-  text-transform: uppercase;
+  background: transparent; border: 1px solid var(--primary); color: var(--primary); font-family: 'Orbitron', sans-serif; padding: 16px; border-radius: 12px; width: 100%; margin-top: 15px; cursor: pointer; font-size: 1rem; transition: all 0.2s; text-transform: uppercase;
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-/* --- PREVISUALIZACIÓN IMAGEN --- */
-.preview-box {
-  width: 100%;
-  height: 250px;
-  background: #000;
-  border-radius: 12px;
-  border: 1px solid #333;
-  margin: 20px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
+/* --- PREVIEW --- */
+.preview-box { width: 100%; height: 250px; background: #000; border-radius: 12px; border: 1px solid #333; margin: 20px 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .exists-card .preview-box { border-color: var(--neon-green); }
 .error-card .preview-box { border-color: var(--error); }
 .preview-img { width: 100%; height: 100%; object-fit: contain; }
 
-/* --- CAJAS DE DATOS --- */
-.author-box {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid #444;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: left;
-  margin-bottom: 15px;
-}
+/* --- DATOS --- */
+.author-box { background: rgba(0, 0, 0, 0.6); border: 1px solid #444; padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 15px; }
 .exists-card .author-box { border-color: var(--neon-green); }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-.info-item {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid #444;
-  border-radius: 10px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+.info-item { background: rgba(0, 0, 0, 0.6); border: 1px solid #444; border-radius: 10px; padding: 15px; display: flex; flex-direction: column; align-items: center; }
 .exists-card .info-item { border-color: var(--neon-green); }
 
 .label { font-size: 0.75rem; font-weight: bold; margin-bottom: 5px; opacity: 0.8; }
 .exists-card .label, .exists-card .value { color: var(--neon-green); } 
 .success-card .label, .success-card .value { color: #fff; }
-
 .value { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; }
 
-/* --- CHECKLIST (ANIMACIÓN DE CARGA) --- */
-.checklist {
-  background: #000;
-  border-radius: 12px;
-  padding: 20px;
-  text-align: left;
-  margin-top: 20px;
-  border: 1px solid #333;
-}
-.check-row {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 12px 0;
-  border-bottom: 1px solid #222;
-  opacity: 0.5; /* Apagado por defecto */
-  transition: all 0.5s ease;
-}
-.check-row.active { opacity: 1; transform: translateX(5px); } /* Se ilumina y se mueve un poco */
+/* --- CHECKLIST --- */
+.checklist { background: #000; border-radius: 12px; padding: 20px; text-align: left; margin-top: 20px; border: 1px solid #333; }
+.check-row { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid #222; opacity: 0.5; transition: all 0.5s ease; }
+.check-row.active { opacity: 1; transform: translateX(5px); }
 .check-row:last-child { border-bottom: none; }
 .check-icon { font-size: 1.2rem; }
 
-/* --- MODAL (VENTANA EMERGENTE) --- */
-.modal-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(8px);
-}
-.modal-content {
-  background: #111;
-  border: 1px solid #fff;
-  padding: 40px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 480px;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 0 50px rgba(255,255,255,0.1);
-}
+/* --- MODAL --- */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(8px); }
+.modal-content { background: #111; border: 1px solid #fff; padding: 40px; border-radius: 20px; width: 90%; max-width: 480px; text-align: center; position: relative; box-shadow: 0 0 50px rgba(255,255,255,0.1); }
 .modal-buttons { display: flex; gap: 15px; margin-top: 30px; }
 .modal-yes { background: #fff; color: #000; border: none; padding: 12px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer; }
 .modal-no { background: transparent; border: 1px solid #fff; color: #fff; padding: 12px; flex: 1; border-radius: 8px; cursor: pointer; }
-
-.step-list { text-align: left; margin-top: 20px; color: #ccc; line-height: 1.6; }
-.step-list a { color: var(--neon-green); text-decoration: none; border-bottom: 1px solid var(--neon-green); }
 .close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 1.5rem; cursor: pointer; }
 
-/* --- RESPONSIVE (MÓVIL) --- */
+/* AJUSTE LISTA ENUMERADA */
+.step-list { 
+    text-align: left; 
+    margin-top: 20px; 
+    color: #ccc; 
+    line-height: 1.6;
+    padding-left: 20px; /* Espacio para los números */
+}
+.step-list li {
+    margin-bottom: 15px; /* Separación entre ítems */
+    padding-left: 10px;
+}
+.step-list a { color: var(--neon-green); text-decoration: none; border-bottom: 1px solid var(--neon-green); }
+
+/* MÓVIL */
 @media (max-width: 600px) {
     .card { padding: 1.5rem; }
     .header-title-center { font-size: 1.1rem; }

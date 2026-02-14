@@ -26,15 +26,13 @@ function App() {
   const [showModal, setShowModal] = useState(false); 
   const [modalStep, setModalStep] = useState(1); 
 
-  // --- HEADER: SOLO MUESTRA USUARIO EN EL ENGRANAJE ---
+  // --- HEADER ---
   const Header = () => (
       <div className="card-header">
-          {/* Título Centrado */}
           <div className="header-title-center">
              <span style={{fontSize:'1.5rem', marginRight:'10px'}}>🔒</span> SECURI CERTIFY
           </div>
           
-          {/* Engranaje: Solo informativo */}
           {isAdmin && (
               <div className="settings-floater">
                   <button onClick={() => setShowMenu(!showMenu)} className="settings-btn" style={{color: '#fff'}}>
@@ -44,7 +42,6 @@ function App() {
                       <div className="wallet-menu">
                           <p style={{margin: '0 0 5px 0', fontSize: '0.7rem', color: '#888'}}>USUARIO CONECTADO</p>
                           <code style={{display:'block', color: '#00ff88', fontSize: '0.8rem'}}>{wallet.slice(0,10)}...</code>
-                          {/* Se eliminó el botón de cerrar sesión de aquí */}
                       </div>
                   )}
               </div>
@@ -136,7 +133,6 @@ function App() {
             setFinalData({ 
                 autor, 
                 fecha: dateObj.toLocaleDateString("es-ES", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), 
-                // HORA CON ZONA HORARIA
                 hora: dateObj.toLocaleTimeString("es-ES", { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }), 
                 hash 
             });
@@ -186,7 +182,7 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* MODAL */}
+      {/* MODAL CONFIGURACIÓN INICIAL */}
       {showModal && (
         <div className="modal-overlay">
             <div className="modal-content">
@@ -202,13 +198,22 @@ function App() {
                     </>
                 ) : (
                     <>
-                        <h2 style={{fontSize:'1.2rem', textAlign:'left'}}>🛠️ Configuración Rápida</h2>
+                        <h2 style={{fontSize:'1.2rem', textAlign:'left'}}>🛠️ Configuración Inicial</h2>
                         <ol className="step-list">
-                            <li><strong>1. Instalar:</strong> Descarga <a href="https://metamask.io/download/" target="_blank">MetaMask</a>.</li>
-                            <li><strong>2. Cuenta:</strong> Crea tu cartera.</li>
-                            <li><strong>3. Saldo:</strong> Usa el <a href="https://faucet.polygon.technology/" target="_blank">Faucet</a>.</li>
+                            {/* AQUÍ ESTÁ EL CAMBIO: Quitamos los números manuales "1.", "2." */}
+                            <li>
+                                <strong>Instalar MetaMask:</strong> Descarga la extensión oficial para tu navegador.<br/>
+                                <a href="https://metamask.io/download/" target="_blank">Ir a descargar ↗</a>
+                            </li>
+                            <li>
+                                <strong>Crear Cuenta:</strong> Abre la extensión y sigue los pasos para "Crear nueva cartera".
+                            </li>
+                            <li>
+                                <strong>Conseguir Saldo (POL):</strong> Necesitas monedas de prueba para pagar el gas.<br/>
+                                <a href="https://faucet.polygon.technology/" target="_blank">Ir al Faucet ↗</a>
+                            </li>
                         </ol>
-                        <button onClick={() => setModalStep(1)} className="btn-secondary" style={{padding:'10px'}}>← Volver</button>
+                        <button onClick={() => setModalStep(1)} className="btn-secondary" style={{padding:'10px'}}>← VOLVER</button>
                     </>
                 )}
             </div>
@@ -240,14 +245,13 @@ function App() {
                 </label>
             </div>
             
-            {/* BOTÓN VOLVER GRANDE ABAJO (IMPORTANTE) */}
             <button onClick={logout} className="btn-secondary" style={{border:'none', fontSize:'0.8rem', marginTop:'30px', opacity: 0.8}}>
                ← Volver al Inicio
             </button>
         </div>
       )}
 
-      {/* PROCESSING */}
+      {/* PROCESANDO */}
       {view === 'processing' && (
         <div className="card">
              <Header />
@@ -309,7 +313,6 @@ function App() {
             <button onClick={() => setView('dashboard')} className="btn-secondary" style={{color: view==='exists'?'#00ff88':'#fff', borderColor: view==='exists'?'#00ff88':'#fff'}}>
                 Verificar Otra
             </button>
-            {/* BOTÓN VOLVER */}
             <button onClick={logout} className="btn-secondary" style={{border:'none', fontSize:'0.8rem', marginTop:'10px', opacity: 0.6}}>
                ← Volver al Inicio
             </button>
