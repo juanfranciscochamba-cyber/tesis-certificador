@@ -26,15 +26,15 @@ function App() {
   const [showModal, setShowModal] = useState(false); 
   const [modalStep, setModalStep] = useState(1); 
 
-  // --- HEADER CENTRADO + ENGRANAJE A LA DERECHA ---
+  // --- HEADER: SOLO MUESTRA USUARIO EN EL ENGRANAJE ---
   const Header = () => (
       <div className="card-header">
-          {/* Título TOTALMENTE CENTRADO */}
+          {/* Título Centrado */}
           <div className="header-title-center">
              <span style={{fontSize:'1.5rem', marginRight:'10px'}}>🔒</span> SECURI CERTIFY
           </div>
           
-          {/* Engranaje Flotante a la Derecha */}
+          {/* Engranaje: Solo informativo */}
           {isAdmin && (
               <div className="settings-floater">
                   <button onClick={() => setShowMenu(!showMenu)} className="settings-btn" style={{color: '#fff'}}>
@@ -43,10 +43,8 @@ function App() {
                   {showMenu && (
                       <div className="wallet-menu">
                           <p style={{margin: '0 0 5px 0', fontSize: '0.7rem', color: '#888'}}>USUARIO CONECTADO</p>
-                          <code style={{display:'block', marginBottom:'15px', color: '#fff'}}>{wallet.slice(0,10)}...</code>
-                          <button onClick={logout} className="btn-secondary" style={{padding: '10px', fontSize: '0.75rem', marginTop: '0', borderColor: '#ff5555', color: '#ff5555'}}>
-                              Cerrar Sesión
-                          </button>
+                          <code style={{display:'block', color: '#00ff88', fontSize: '0.8rem'}}>{wallet.slice(0,10)}...</code>
+                          {/* Se eliminó el botón de cerrar sesión de aquí */}
                       </div>
                   )}
               </div>
@@ -138,6 +136,7 @@ function App() {
             setFinalData({ 
                 autor, 
                 fecha: dateObj.toLocaleDateString("es-ES", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }), 
+                // HORA CON ZONA HORARIA
                 hora: dateObj.toLocaleTimeString("es-ES", { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }), 
                 hash 
             });
@@ -187,6 +186,7 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* MODAL */}
       {showModal && (
         <div className="modal-overlay">
             <div className="modal-content">
@@ -215,6 +215,7 @@ function App() {
         </div>
       )}
 
+      {/* LOGIN */}
       {view === 'login' && (
         <div className="card">
             <div style={{fontSize: '2rem'}}>🔒</div>
@@ -226,6 +227,7 @@ function App() {
         </div>
       )}
 
+      {/* DASHBOARD */}
       {view === 'dashboard' && (
         <div className="card">
             <Header />
@@ -237,13 +239,15 @@ function App() {
                     <input type="file" onChange={handleFile} accept="image/*" hidden />
                 </label>
             </div>
-            {/* BOTÓN VOLVER AL INICIO */}
+            
+            {/* BOTÓN VOLVER GRANDE ABAJO (IMPORTANTE) */}
             <button onClick={logout} className="btn-secondary" style={{border:'none', fontSize:'0.8rem', marginTop:'30px', opacity: 0.8}}>
                ← Volver al Inicio
             </button>
         </div>
       )}
 
+      {/* PROCESSING */}
       {view === 'processing' && (
         <div className="card">
              <Header />
@@ -265,6 +269,7 @@ function App() {
         </div>
       )}
 
+      {/* RESULTADOS */}
       {(view === 'success' || view === 'exists') && (
          <div className={`card ${view === 'exists' ? 'exists-card' : 'success-card'}`}>
             <Header />
@@ -304,13 +309,14 @@ function App() {
             <button onClick={() => setView('dashboard')} className="btn-secondary" style={{color: view==='exists'?'#00ff88':'#fff', borderColor: view==='exists'?'#00ff88':'#fff'}}>
                 Verificar Otra
             </button>
-            {/* BOTÓN VOLVER EXTRA */}
+            {/* BOTÓN VOLVER */}
             <button onClick={logout} className="btn-secondary" style={{border:'none', fontSize:'0.8rem', marginTop:'10px', opacity: 0.6}}>
                ← Volver al Inicio
             </button>
          </div>
       )}
 
+      {/* ERROR */}
       {view === 'not-found' && (
         <div className="card error-card">
             <Header />
