@@ -30,7 +30,7 @@ function App() {
   const Header = () => (
       <div className="card-header">
           <div className="header-title-center">
-             <span style={{fontSize:'1.5rem', marginRight:'10px'}}>🔒</span> SECURI CERTIFY
+             <span style={{fontSize:'1.5rem', marginRight:'10px'}}>🔒</span> SECURITY CERTIFY
           </div>
           
           {isAdmin && (
@@ -224,11 +224,11 @@ function App() {
       {view === 'login' && (
         <div className="card">
             <div style={{fontSize: '2rem'}}>🔒</div>
-            <h1>SECURI CERTIFY</h1>
-            <p>Sistema de Atestación de Contenido Sintético</p>
+            <h1>SECURITY CERTIFY</h1>
+            <p>Sistema de Certificación de Imagen</p>
             <button onClick={checkConnectionAndOpen} className="btn-primary">🔑 CERTIFICAR IMAGEN</button>
             <button onClick={enterPublicMode} className="btn-secondary">👁️ VALIDAR IMAGEN</button>
-            <p style={{marginTop: '20px', fontSize: '0.8rem'}}>*Validar no requiere conexión con MetaMask</p>
+            <p style={{marginTop: '20px', fontSize: '0.8rem'}}>*La validación no requiere conexión con MetaMask</p>
         </div>
       )}
 
@@ -325,7 +325,7 @@ function App() {
             <Header />
             <div style={{fontSize:'3rem'}}>❌</div>
             <h1 style={{color:'#ff3333'}}>NO CERTIFICADA</h1>
-            <p>Esta imagen no tiene registro en la Blockchain.</p>
+            <p>Esta imagen no ha sido previamente certificada.</p>
             {previewUrl && <div className="preview-box" style={{borderColor:'#ff3333'}}><img src={previewUrl} className="preview-img" style={{filter:'grayscale(1)'}} /></div>}
             <button onClick={() => setView('dashboard')} className="btn-secondary" style={{color:'#ff3333', borderColor:'#ff3333'}}>Intentar Otra</button>
             <button onClick={logout} className="btn-secondary" style={{border:'none', fontSize:'0.8rem', marginTop:'10px'}}>
